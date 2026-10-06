@@ -1,0 +1,17 @@
+on:
+    push:
+        branches: ["master"]
+
+jobs:
+    checkout-code:
+        runs-on: ubuntu:latest
+        steps:
+            - name: Loading code
+              uses: action/checkout@v7
+            
+            - name: Installing node
+              run: |
+                apt install nodejs -y
+   
+
+        
