@@ -1,0 +1,24 @@
+{
+  "name": "utkarsh-portfolio-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "db:migrate": "node src/scripts/migrate.js",
+    "db:seed": "node src/scripts/seedDb.js",
+    "db:init": "npm run db:migrate && npm run db:seed",
+    "auth:reset": "node src/scripts/resetAdminPassword.js",
+    "test": "node --test",
+    "test:integration": "node src/scripts/runIntegrationTests.js"
+  },
+  "dependencies": {
+    "cors": "latest",
+    "dotenv": "latest",
+    "express": "latest",
+    "express-rate-limit": "latest",
+    "helmet": "latest",
+    "morgan": "latest",
+    "pg": "latest"
+  }
+}

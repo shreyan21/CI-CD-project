@@ -1,0 +1,30 @@
+services:
+    db: 
+      image: postgres
+      environment:
+         - POSTGRES_USER=admin
+         - POSTGRES_DB=utkarsh_portfolio
+         - POSTGRES_PASSWORD=1234
+      ports:
+        - '5432:5432'
+
+      volumes:
+        - myvol:/var/lib/postgresql
+
+    
+    backend:
+        build: ./backend/
+        env_file: ./backend/.env
+        ports:
+          - '4000:4000'
+        depends_on: db
+
+    frontend:
+        build: ./frontend/
+        env_file: ./frontend/.env
+        ports:
+          - '5173:5173'
+        depends_on: db
+
+volumes:
+  myvol:
