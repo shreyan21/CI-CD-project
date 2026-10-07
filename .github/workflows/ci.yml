@@ -29,14 +29,14 @@ jobs:
               uses: docker/build-push-action@v6
               with:
                 context: ./backend/
-                tags: my-ecr/backend:latest
+                tags: ${{steps.login-ecr.outputs.registry}}/shreyan21/my-ecr/backend:latest
                 push: true
              
             - name: Building and pushing frontend image to registry
               uses: docker/build-push-action@v6
               with:
                 context: ./frontend/
-                tags: my-ecr/frontend:latest
+                tags: ${{steps.login-ecr.outputs.registry}}/shreyan21/my-ecr/frontend:latest
                 push: true
 
             
