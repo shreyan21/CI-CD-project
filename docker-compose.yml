@@ -18,7 +18,8 @@ services:
         env_file: ./backend/.env
         ports:
           - '4000:4000'
-        depends_on: db
+        depends_on: 
+           - db
 
     frontend:
         build: ./frontend/
@@ -26,7 +27,8 @@ services:
         env_file: ./frontend/.env
         ports:
           - '5173:5173'
-        depends_on: backend
+        depends_on: 
+           - backend
 
 volumes:
   myvol:
