@@ -48,7 +48,7 @@ jobs:
          docker tag frontend:v1.0 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr:frontend-v1.0
          docker push 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr:backend-v1.0
          docker push 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr:frontend-v1.0
-         docker compose up -d backend db
+         docker compose up -d backend db frontend
          docker compose exec -it backend npm run db:init
          
          
