@@ -42,6 +42,7 @@ jobs:
 
             - name: Running docker compose
               run: |
+                apt install docker-compose-plugin -y \
                 docker compose up -d \
                 docker compose stop \
                 docker push 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr/backend:v1.0 \
