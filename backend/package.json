@@ -10,6 +10,7 @@
     "db:init": "npm run db:migrate && npm run db:seed",
     "auth:reset": "node src/scripts/resetAdminPassword.js",
     "test": "node --test",
+    "test:health": "node --test test/health.test.js",
     "test:integration": "node src/scripts/runIntegrationTests.js"
   },
   "dependencies": {

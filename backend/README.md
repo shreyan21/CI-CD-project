@@ -14,8 +14,18 @@ Tests:
 
 ```powershell
 npm.cmd test
+npm.cmd run test:health
 npm.cmd run test:integration
 ```
+
+The health tests send HTTP requests to `/health` on a temporary local server and
+cover successful responses, database failures, and recovery. They use a stubbed
+database, so PostgreSQL and environment secrets are not required. These tests
+verify the endpoint's behavior; they do not verify a live PostgreSQL connection.
+
+For a GitHub Actions step, set `working-directory: backend`, install dependencies
+with `npm ci`, and run `npm test` (or `npm run test:health` for only health tests).
+Use Node.js 22 or newer.
 
 Create or reset the database-backed admin account:
 
