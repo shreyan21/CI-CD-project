@@ -1,60 +1,49 @@
 on:
-    push:
-        branches: ["master"]
-      
+  push:
+    branches: ["master"]
+
 permissions:
   id-token: write
   contents: read
 
 jobs:
-    checkout-code:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Loading code
-              uses: actions/checkout@v7
-        
-            - name: Installing docker
-              uses: docker/setup-buildx-action@v2
-              
-            - name: Logging into AWS
-              uses: aws-actions/configure-aws-credentials@v2
-              with:
-                role-to-assume: ${{vars.AWS_ROLE_ARN}}
-                aws-region: ${{vars.AWS_REGION}}
+  checkout-code:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Loading code
+        uses: actions/checkout@v7
 
-            - name: Logging into ECR
-              uses: aws-actions/amazon-ecr-login@v2
-              
+      - name: Installing docker
+        uses: docker/setup-buildx-action@v2
 
-            - name: Installing nodejs
-              uses: actions/setup-node@v3
-              with:
-                node-version: 20
+      - name: Logging into AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{vars.AWS_ROLE_ARN}}
+          aws-region: ${{vars.AWS_REGION}}
 
-            - name: Running tests
-              working-directory: ./backend
-              run: |
-                npm ci  \
-                npm run db:init 
+      - name: Logging into ECR
+        uses: aws-actions/amazon-ecr-login@v2
 
-            - name: Installing docker
-              uses: docker/setup-buildx-action@v2
+      - name: Installing nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
 
-            - name: Running docker compose
-              run: |
-                apt install docker-compose-plugin -y \
-                docker compose up -d \
-                docker compose stop \
-                docker push 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr/backend:v1.0 \
-                docker push 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr/frontend:v1.0
+      - name: Running tests
+        working-directory: ./backend
+        run: |
+          npm ci  \
+          npm run db:init
 
+      - name: Installing docker
+        uses: docker/setup-buildx-action@v2
 
-            
-                
-
-                
-
-
-
-
-          
+      - name: Running docker compose
+        run: |
+          docker compose up -d \
+          docker compose stop \
+          docker tag backend:v1.0 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr/backend:v1.0 \
+          docker tag frontend:v1.0 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr/frontend:v1.0 \
+          docker push 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr/backend:v1.0 \
+          docker push 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr/frontend:v1.0
