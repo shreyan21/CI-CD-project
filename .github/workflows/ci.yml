@@ -33,7 +33,8 @@ jobs:
       - name: Running tests
         working-directory: ./backend
         run: |
-          npm ci  \
+          npm ci  
+          npm test
           npm run db:init
 
       - name: Installing docker
