@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-labelledby="title desc">
+<title id="title">Portfolio CI pipeline</title>
+<desc id="desc">A push to master triggers GitHub Actions backend tests, then Docker Compose builds frontend and backend images which are published to Amazon ECR. AWS authentication uses OIDC. Health tests use a mocked database. Deployment is the next milestone.</desc>
+<rect width="1200" height="1200" fill="#0B1220"/>
+<text x="70" y="64.2" fill="#63D8B1" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="700">PROJECT UPDATE  /  CURRENT CI MILESTONE</text>
+<text x="70" y="155.2" fill="#FFFFFF" font-family="DejaVu Sans, sans-serif" font-size="64" font-weight="700">Code in. Images out.</text>
+<text x="70" y="217.6" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="27" font-weight="400">React + Express + PostgreSQL portfolio</text>
+<rect x="70" y="245" width="164" height="30" rx="15" fill="#183A32"/>
+<text x="86" y="262.8" fill="#82E9C8" font-family="DejaVu Sans, sans-serif" font-size="16" font-weight="700">Verified CI run</text>
+<rect x="70" y="310" width="300" height="150" rx="18" fill="#131F31" stroke="#2C4059" stroke-width="2"/>
+<text x="94" y="345.4" fill="#63D8B1" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="700">01  /  TRIGGER</text>
+<text x="94" y="384.0" fill="#FFFFFF" font-family="DejaVu Sans, sans-serif" font-size="25" font-weight="700">Push to master</text>
+<text x="94" y="419.8" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="400">GitHub Actions starts</text>
+<rect x="450" y="310" width="300" height="150" rx="18" fill="#131F31" stroke="#2C4059" stroke-width="2"/>
+<text x="474" y="345.4" fill="#63D8B1" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="700">02  /  CHECK</text>
+<text x="474" y="384.0" fill="#FFFFFF" font-family="DejaVu Sans, sans-serif" font-size="25" font-weight="700">Backend tests</text>
+<text x="474" y="419.8" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="400">npm ci  then  npm test</text>
+<rect x="830" y="310" width="300" height="150" rx="18" fill="#131F31" stroke="#2C4059" stroke-width="2"/>
+<text x="854" y="345.4" fill="#63D8B1" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="700">03  /  PACKAGE</text>
+<text x="854" y="384.0" fill="#FFFFFF" font-family="DejaVu Sans, sans-serif" font-size="25" font-weight="700">Compose builds</text>
+<text x="854" y="419.8" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="400">Frontend + backend</text>
+<polyline points="370,385 431,385" fill="none" stroke="#556C87" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="422,378 431,385 422,392" fill="none" stroke="#63D8B1" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="750,385 811,385" fill="none" stroke="#556C87" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="802,378 811,385 802,392" fill="none" stroke="#63D8B1" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="980,460 980,492 440,492 440,529" fill="none" stroke="#556C87" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="790,492 790,529" fill="none" stroke="#556C87" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="433,520 440,529 447,520" fill="none" stroke="#63D8B1" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="783,520 790,529 797,520" fill="none" stroke="#63D8B1" stroke-width="3" stroke-linejoin="round"/>
+<rect x="290" y="530" width="300" height="112" rx="18" fill="#142B40" stroke="#395774" stroke-width="2"/>
+<text x="315" y="572.0" fill="#FFFFFF" font-family="DejaVu Sans, sans-serif" font-size="25" font-weight="700">Frontend image</text>
+<text x="315" y="614.6" fill="#86C7F2" font-family="DejaVu Sans, sans-serif" font-size="22" font-weight="400">frontend-v1.0</text>
+<rect x="640" y="530" width="300" height="112" rx="18" fill="#142B40" stroke="#395774" stroke-width="2"/>
+<text x="665" y="572.0" fill="#FFFFFF" font-family="DejaVu Sans, sans-serif" font-size="25" font-weight="700">Backend image</text>
+<text x="665" y="614.6" fill="#86C7F2" font-family="DejaVu Sans, sans-serif" font-size="22" font-weight="400">backend-v1.0</text>
+<polyline points="440,642 440,670 615,670 615,706" fill="none" stroke="#556C87" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="790,642 790,670 615,670" fill="none" stroke="#556C87" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="608,697 615,706 622,697" fill="none" stroke="#63D8B1" stroke-width="3" stroke-linejoin="round"/>
+<rect x="70" y="708" width="1060" height="122" rx="20" fill="#242434" stroke="#625640" stroke-width="2"/>
+<text x="96" y="744.6" fill="#F4BD76" font-family="DejaVu Sans, sans-serif" font-size="17" font-weight="700">04  /  PUBLISH</text>
+<text x="96" y="791.6" fill="#FFFFFF" font-family="DejaVu Sans, sans-serif" font-size="32" font-weight="700">Amazon ECR</text>
+<text x="418" y="787.4" fill="#D9CBBB" font-family="DejaVu Sans, sans-serif" font-size="23" font-weight="400">Both images stored for the next release</text>
+<rect x="70" y="864" width="1060" height="82" rx="16" fill="#111E30"/>
+<text x="94" y="903.4" fill="#FFFFFF" font-family="DejaVu Sans, sans-serif" font-size="23" font-weight="700">AWS authentication</text>
+<text x="425" y="904.4" fill="#63D8B1" font-family="DejaVu Sans, sans-serif" font-size="23" font-weight="400">GitHub OIDC  →  IAM role</text>
+<text x="425" y="929.6" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="17" font-weight="400">Temporary credentials • no long-lived AWS keys</text>
+<text x="70" y="1000.0" fill="#FFFFFF" font-family="DejaVu Sans, sans-serif" font-size="25" font-weight="700">Health tests: success • failure • recovery</text>
+<text x="70" y="1040.8" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="400">Endpoint behavior tested with a mocked database.</text>
+<polyline points="70,1080 1130,1080" fill="none" stroke="#2C4059" stroke-width="2" stroke-linejoin="round"/>
+<text x="70" y="1119.0" fill="#F4BD76" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="700">NEXT: AWS deployment + post-deployment health checks</text>
+<text x="70" y="1164.4" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="400">Utkarsh Singh Rajawat</text>
+<text x="525" y="1164.4" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="400">github.com/shreyan21/CI-CD-project</text>
+</svg>
