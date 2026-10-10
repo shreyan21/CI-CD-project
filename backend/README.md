@@ -1,42 +1,26 @@
-# Utkarsh Portfolio API
+# Portfolio API
 
-Express + PostgreSQL API for public portfolio data and authenticated skill management.
+Express + PostgreSQL API for public portfolio data and authenticated skills management.
 
-## Main commands
+[Main setup, architecture and CI guide](../README.md) · [Local setup](../README.md#run-locally) · [Test scope](../README.md#tests-and-builds)
 
-```powershell
-npm.cmd ci
-npm.cmd run db:init
-npm.cmd run dev
-```
+| Command | Purpose |
+| --- | --- |
+| `npm ci` | Install lockfile dependencies |
+| `npm run dev` | Start the API with Node watch mode |
+| `npm start` | Start the API without watch mode |
+| `npm run db:migrate` | Apply database migrations |
+| `npm run db:seed` | Insert initial data while preserving existing rows |
+| `npm run db:init` | Run migrations and seed |
+| `npm run auth:reset -- admin` | Prompt for a password and create/reset a database-backed admin |
+| `npm test` | Run the checked-in mocked health tests |
+| `npm run test:health` | Run only `test/health.test.js` |
 
-Tests:
+The health tests use a stubbed database and do not require PostgreSQL. They cover success, failure and recovery of `/health`.
 
-```powershell
-npm.cmd test
-npm.cmd run test:health
-npm.cmd run test:integration
-```
+The `test:integration` script references a missing `test/integration.test.js`; it is not a working integration suite yet.
 
-The health tests send HTTP requests to `/health` on a temporary local server and
-cover successful responses, database failures, and recovery. They use a stubbed
-database, so PostgreSQL and environment secrets are not required. These tests
-verify the endpoint's behavior; they do not verify a live PostgreSQL connection.
+In Compose, database connections use host `db`; when running the backend directly on the host, use `localhost` and matching PostgreSQL credentials. Keep session secrets outside Git.
 
-For a GitHub Actions step, set `working-directory: backend`, install dependencies
-with `npm ci`, and run `npm test` (or `npm run test:health` for only health tests).
-Use Node.js 22 or newer.
+Admin authentication uses PostgreSQL sessions, an HTTP-only SameSite cookie and CSRF protection. The password-reset command stores a password hash and invalidates older sessions.
 
-Create or reset the database-backed admin account:
-
-```powershell
-npm.cmd run auth:reset -- admin
-```
-
-The command securely prompts for the password, hashes it, and saves only the hash in PostgreSQL. No admin username or password hash is needed in `.env`.
-
-Admin auth uses a short-lived server-side PostgreSQL session, an HTTP-only SameSite cookie, and a CSRF token. No admin password or API key is stored in frontend code.
-
-Database migrations live in `migrations/`. Seed data uses conflict-safe inserts and does not truncate existing rows.
-
-See [SETUP.md](../SETUP.md) for complete setup.
