@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/server.js",
-    "start": "npm run db:init && node src/server.js",
+    "start": "node src/server.js",
     "db:migrate": "node src/scripts/migrate.js",
     "db:seed": "node src/scripts/seedDb.js",
     "db:init": "npm run db:migrate && npm run db:seed",
