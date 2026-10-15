@@ -1,0 +1,9 @@
+# Local runtime configuration; keep only safe examples in Git.
+.env
+.env.*
+!.env.example
+
+node_modules/
+dist/
+coverage/
+*.log

@@ -4,9 +4,9 @@ services:
       environment:
          - POSTGRES_USER=admin
          - POSTGRES_DB=utkarsh_portfolio
-         - POSTGRES_PASSWORD=1234
+         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the root .env file}
       ports:
-        - '5432:5432'
+        - '127.0.0.1:5432:5432'
 
       volumes:
         - myvol:/var/lib/postgresql
@@ -16,8 +16,10 @@ services:
         build: ./backend/
         image: backend:v1.0
         env_file: ./backend/.env
+        environment:
+          DATABASE_URL: postgres://admin:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the root .env file}@db:5432/utkarsh_portfolio
         ports:
-          - '4000:4000'
+          - '127.0.0.1:4000:4000'
         depends_on: 
            - db
 
@@ -26,7 +28,7 @@ services:
         image: frontend:v1.0
         env_file: ./frontend/.env 
         ports:
-          - '5173:5173'
+          - '127.0.0.1:5173:5173'
         depends_on: 
            - backend
 

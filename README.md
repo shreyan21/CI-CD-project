@@ -24,7 +24,7 @@ A personal React + Express + PostgreSQL portfolio, used to practise automated te
 | --- | --- |
 | Application | React/Vite frontend, Express API, PostgreSQL migrations and seed scripts; public portfolio and skills admin UI. |
 | Containers | Frontend and backend Dockerfiles; three Compose services and a named database volume. Both images currently run development servers. |
-| CI | GitHub Actions on pushes to `master`; `npm ci` and `npm test` in `backend/`; `docker compose build`. |
+| CI | GitHub Actions on pushes to `master`; `npm ci` and `npm test` in `backend/`; build frontend/backend Dockerfiles without runtime environment files. |
 | Registry | Both application images pushed to ECR in the verified successful run above. |
 | AWS authentication | GitHub OIDC assumes an IAM role; the workflow does not use long-lived AWS access-key inputs. |
 | Deployment and operations | EC2 deployment, Terraform, monitoring, rollback and database restore evidence remain planned. |
@@ -68,33 +68,37 @@ git clone https://github.com/shreyan21/CI-CD-project.git
 cd CI-CD-project
 ```
 
-Create `backend/.env` and `frontend/.env` from their `.env.example` templates if you do not already have local configuration. Review existing files before overwriting them.
+Copy the safe templates to local configuration files (on a fresh clone):
 
-In `docker-compose.yml`, choose a local database password. Match `backend/.env` to the Compose database user, password and database name:
-
-```dotenv
-PORT=4000
-DATABASE_URL=postgresql://admin:YOUR_LOCAL_DB_PASSWORD@db:5432/utkarsh_portfolio
-FRONTEND_ORIGIN=http://localhost:5173
-PGSSL=false
-DB_POOL_SIZE=10
-SESSION_SECRET=REPLACE_WITH_A_RANDOM_VALUE_OF_AT_LEAST_32_CHARACTERS
-COOKIE_SECURE=false
+```bash
+cp .env.example .env
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
 ```
 
-Generate a session secret locally:
+If you already have local `.env` files, keep them and update the required values instead of overwriting them.
+
+Generate a new database password locally:
+
+```bash
+node -e "console.log(require('node:crypto').randomBytes(24).toString('hex'))"
+```
+
+Set `POSTGRES_PASSWORD` in the root `.env` to that generated value. In `backend/.env`, replace `REPLACE_WITH_ROOT_ENV_PASSWORD` in `DATABASE_URL` with the same value. Hex characters are URL-safe. The backend template uses `localhost` for commands run directly on your machine; Compose overrides `DATABASE_URL` to use the database service name `db` and the root password.
+
+Generate a separate session secret:
 
 ```bash
 node -e "console.log(require('node:crypto').randomBytes(48).toString('base64url'))"
 ```
 
-Set `frontend/.env` to:
+Set `SESSION_SECRET` in `backend/.env` to that value. Keep the other local defaults. Admin accounts are stored in PostgreSQL; the old `ADMIN_USERNAME` and `ADMIN_PASSWORD_HASH` environment settings are no longer needed.
 
-```dotenv
-VITE_API_URL=http://localhost:4000/api
-```
+`frontend/.env` uses `VITE_API_URL=http://localhost:4000/api`. Every `VITE_` value is public browser configuration; never put credentials there.
 
-The checked-in backend example uses different database credentials from Compose; copying it alone is insufficient. Use your own configuration and do not commit secrets.
+Local `.env` files are ignored by Git, and `.env` variants are excluded from application image build contexts. Only `.env.example` templates belong in source control. The services bind to loopback for local development.
+
+**Existing database volume:** changing `POSTGRES_PASSWORD` does not change a password in an initialized PostgreSQL volume. If the old credential was used, follow the [credential rotation guide](docs/security/credential-rotation.md) before restarting with new values. Do not delete a volume containing data you need.
 
 ### 2. Build, start the database and initialize data
 
@@ -186,7 +190,7 @@ Source: [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 | Repository variables | `AWS_ROLE_ARN`, `AWS_REGION` |
 | AWS login | OIDC role assumption followed by ECR login |
 | Checks | Backend `npm ci`, then `npm test` |
-| Packaging | `docker compose build` for frontend and backend |
+| Packaging | `docker build` for frontend and backend |
 | Publishing | Both images pushed to the ECR repository `my-ecr` |
 | Image tags | `backend-v1.0`, `frontend-v1.0` |
 | Deployment | No EC2/SSM deployment step in this workflow yet. |
@@ -218,8 +222,8 @@ Component guides: [backend](backend/README.md) and [frontend](frontend/README.md
 
 ## Known limitations and next steps
 
-- **Secrets:** `.env` files are currently tracked. Remove them from tracking, ignore future local environment files and rotate any real exposed credentials. Removing the latest file does not erase Git history.
-- **Local database configuration:** Compose includes a development password, publishes port 5432 and uses an unpinned `postgres` image. Use controlled versions and private database access before public deployment.
+- **Historical credentials:** runtime `.env` files have been removed from the current tree and ignored. Earlier commits still contain backend credentials and a session secret. Treat those values as exposed and rotate any that were used; see the [rotation guide](docs/security/credential-rotation.md).
+- **Local database configuration:** Compose requires a local database password and binds published ports to loopback. The `postgres` image is still unpinned; choose a version compatible with your existing database volume before deployment.
 - **Development images:** replace Vite/Node watch-mode images with production serving and runtime configurations.
 - **Repeatable releases:** replace reused `v1.0` tags with commit-SHA tags or digests.
 - **CI coverage:** add pull-request checks, a frontend production-build step and real database integration tests. Align Node versions.
