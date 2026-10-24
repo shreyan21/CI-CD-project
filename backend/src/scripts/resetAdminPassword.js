@@ -46,6 +46,34 @@ function readHidden(prompt) {
   })
 }
 
+async function readPasswordPair() {
+  if (process.stdin.isTTY && process.stdout.isTTY) {
+    const password = await readHidden('New password: ')
+    const confirmation = await readHidden('Confirm password: ')
+    return [password, confirmation]
+  }
+
+  const rl = readline.createInterface({
+    input: process.stdin
+  })
+
+  const lines = []
+
+  for await (const line of rl) {
+    lines.push(line)
+    if (lines.length === 2) break
+  }
+
+  rl.close()
+
+  if (lines.length !== 2) {
+    throw new Error('Password and confirmation are required.')
+  }
+
+  return lines
+}
+
+
 const username = process.argv[2]
 
 if (!username) {
