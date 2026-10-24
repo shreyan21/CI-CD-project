@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 jobs:
-  checkout-code:
+  CI-CD-pipeline:
     runs-on: ubuntu-latest
     steps:
       - name: Loading code
@@ -53,10 +53,11 @@ jobs:
 
       - name: Sending commands to SSM agent on EC2
         run: |
+          
           aws ssm send-command \
                --instance-ids "${{vars.AWS_INSTANCE_ID}}" \
                --document-name "AWS-RunShellScript" \
-               --parameters 'commands=["echo Hello World"]'
+               --parameters 'commands=["set -e ","cd /home/ubuntu","aws ecr get-login-password --region ${{vars.AWS_REGION}} | docker login --username AWS --password-stdin ${{vars.ECR_REGISTRY}}","docker compose up -d --pull always --no-deps frontend backend","docker compose exec -T backend npm run db:migrate"]'
          
     
          

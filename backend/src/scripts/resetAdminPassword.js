@@ -54,8 +54,7 @@ if (!username) {
   await pool.end()
 } else {
   try {
-    const password = await readHidden('New password (at least 12 characters): ')
-    const confirmation = await readHidden('Confirm new password: ')
+   const [password, confirmation] = await readPasswordPair()
     if (password !== confirmation) throw new Error('Passwords do not match.')
 
     await runMigrations(pool)
