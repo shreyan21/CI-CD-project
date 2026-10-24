@@ -50,6 +50,14 @@ jobs:
          docker tag frontend:v1.0 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr:frontend-v2.0
          docker push 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr:backend-v2.0
          docker push 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr:frontend-v2.0
+
+      - name: Sending commands to SSM agent on EC2
+        run: |
+          aws ssm send-command \
+               --instance-ids "${{vars.AWS_INSTANCE_ID}}" \
+               --document-name "AWS-RunShellScript" \
+               --parameters 'commands=["echo Hello World"]'
+         
     
          
          
