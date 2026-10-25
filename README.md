@@ -1,102 +1,70 @@
-# Portfolio DevOps · CI to Amazon ECR
+# Portfolio Delivery on AWS
 
-A personal React + Express + PostgreSQL portfolio, used to practise automated testing, Docker builds and AWS image publishing.
+**A personal portfolio that also demonstrates how I package, test and release an application.**
 
-**Current milestone:** pushes to `master` run backend health tests, build two application images and publish them to Amazon ECR. EC2 deployment, Terraform provisioning and monitoring are the next stages.
+I built a React, Express and PostgreSQL portfolio, containerized it with Docker Compose, and added GitHub Actions to test the API, build two images, publish them to Amazon ECR and send deployment commands to EC2 through AWS Systems Manager. The frontend uses a multi-stage Docker build and Nginx to serve React and proxy API requests.
 
-[Workflow source](.github/workflows/ci.yml) · [Actions history](https://github.com/shreyan21/CI-CD-project/actions) · [Verified successful run](https://github.com/shreyan21/CI-CD-project/actions/runs/37977325973)
+[![Workflow status](https://github.com/shreyan21/CI-CD-project/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/shreyan21/CI-CD-project/actions/workflows/ci.yml)
 
-![Current CI pipeline: master push, backend health tests, frontend/backend image builds and publishing to Amazon ECR using OIDC](docs/architecture/ci-pipeline.png)
+[Inspect a successful run](https://github.com/shreyan21/CI-CD-project/actions/runs/40129948952) | [Read the workflow](.github/workflows/ci.yml) | [Run locally](#run-locally) | [Deployment notes](docs/deployment.md) | [Evidence](docs/evidence.md)
 
-## Contents
+![Portfolio delivery architecture: GitHub Actions tests and builds two images, publishes to ECR, and submits an SSM deployment command; EC2 runs Nginx, Express and PostgreSQL](docs/architecture/delivery-overview.png)
 
-- [Current status](#current-status)
-- [Application architecture](#application-architecture)
-- [Run locally](#run-locally)
-- [Tests and builds](#tests-and-builds)
-- [GitHub Actions and AWS](#github-actions-and-aws)
-- [Repository map](#repository-map)
-- [Known limitations and next steps](#known-limitations-and-next-steps)
+## What this project demonstrates
 
-## Current status
+- **Application delivery:** one personally built product, two application images and a persistent PostgreSQL database.
+- **Container networking:** Nginx forwards browser requests from `/api/` to `backend:4000`; Express connects to `db:5432`.
+- **AWS authentication:** GitHub OIDC assumes an IAM role for the workflow; no long-lived AWS access-key inputs are configured in the workflow.
+- **Automation:** a push to `master` runs three backend health tests, builds both images, publishes to ECR and submits an SSM command to update EC2 containers and run migrations.
+- **Troubleshooting:** the health endpoint checks the database; its tests cover success, failure and recovery. The UI marks fallback data when live API requests fail.
 
-| Area | What is implemented |
-| --- | --- |
-| Application | React/Vite frontend, Express API, PostgreSQL migrations and seed scripts; public portfolio and skills admin UI. |
-| Containers | Frontend and backend Dockerfiles; three Compose services and a named database volume. Both images currently run development servers. |
-| CI | GitHub Actions on pushes to `master`; `npm ci` and `npm test` in `backend/`; `docker compose build`. |
-| Registry | Both application images pushed to ECR in the verified successful run above. |
-| AWS authentication | GitHub OIDC assumes an IAM role; the workflow does not use long-lived AWS access-key inputs. |
-| Deployment and operations | EC2 deployment, Terraform, monitoring, rollback and database restore evidence remain planned. |
-
-The linked run is evidence of tests, image builds and publishing. It is not evidence of a deployed website or a live database integration test.
+**Evidence boundary:** the linked Actions run verifies tests, both image pushes and SSM command submission. Its final SSM status is `Pending`; this workflow does not yet wait for remote completion or run a post-deployment health check. A green badge alone is not proof of a healthy release. See the [evidence record](docs/evidence.md).
 
 ## Application architecture
 
-The React application runs in the user's browser and makes HTTP requests to Express. Express reads portfolio data from PostgreSQL. Compose provides the container network.
-
 ```mermaid
 flowchart TD
-  U["Browser · React application"] -->|"localhost:5173"| F["Frontend · Vite server"]
-  U -->|"localhost:4000/api"| B["Backend · Express API"]
-  B -->|"db:5432 · Compose network"| D["PostgreSQL"]
-  D --- V["Named volume · myvol"]
+  U["Browser"] -->|"HTTP :80"| N["Nginx: React static assets"]
+  N -->|"/api/ requests"| A["Express API :4000"]
+  A -->|"db:5432"| D["PostgreSQL"]
+  D --- V["Named volume: myvol"]
 ```
 
-| Local URL | Purpose |
-| --- | --- |
-| `http://localhost:5173` | Public portfolio |
-| `http://localhost:5173/admin` | Skills admin UI |
-| `http://localhost:4000/health` | Live API/database health check |
-| `http://localhost:4000/api/profile` | Profile JSON |
-| `http://localhost:4000/api/skills` | Skills JSON |
-| `http://localhost:4000/api/experience` | Experience JSON |
-| `http://localhost:4000/api/certifications` | Certifications JSON |
+The public page reads profile, skills, experience and certifications through the API. An admin UI manages skills using password hashes, database-backed sessions, HTTP-only cookies and CSRF checks. These controls are implemented in code; this is not a security-audited service.
 
-The backend uses the Compose service name `db`. The browser uses `localhost`, not the container service name `backend`. Keep frontend and API hostnames consistent when testing admin cookies.
+| Component | Current implementation |
+| --- | --- |
+| Frontend | React + Vite; static build served by Nginx; SPA routing and `/api/` reverse proxy |
+| API | Node.js + Express; validation, request limits, PostgreSQL queries and `/health` |
+| Data | Four versioned migrations, guarded/conflict-safe seed inserts, named Docker volume |
+| CI/CD | GitHub Actions on `master`; backend tests, image builds, ECR publishing, SSM command submission |
+| AWS | ECR image registry; deployment target is an existing EC2 host with SSM |
 
 ## Run locally
 
-Requirements: Git, Docker Engine/Desktop with Compose v2, and Node.js 24 if running commands outside containers.
+Requirements: Git, Docker with Compose v2, and a Bash-compatible terminal. Node.js 24 is needed only for commands run outside containers.
 
-The commands below use a Bash-compatible terminal and start a **local development environment**.
-
-### 1. Clone and configure
+### 1. Configure a fresh checkout
 
 ```bash
 git clone https://github.com/shreyan21/CI-CD-project.git
 cd CI-CD-project
+cp .env.example .env
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
 ```
 
-Create `backend/.env` and `frontend/.env` from their `.env.example` templates if you do not already have local configuration. Review existing files before overwriting them.
-
-In `docker-compose.yml`, choose a local database password. Match `backend/.env` to the Compose database user, password and database name:
-
-```dotenv
-PORT=4000
-DATABASE_URL=postgresql://admin:YOUR_LOCAL_DB_PASSWORD@db:5432/utkarsh_portfolio
-FRONTEND_ORIGIN=http://localhost:5173
-PGSSL=false
-DB_POOL_SIZE=10
-SESSION_SECRET=REPLACE_WITH_A_RANDOM_VALUE_OF_AT_LEAST_32_CHARACTERS
-COOKIE_SECURE=false
-```
-
-Generate a session secret locally:
+Choose a local `POSTGRES_PASSWORD` in the root `.env` and use the same password in `backend/.env`'s `DATABASE_URL`. The examples match for local demonstration; replace the example password. Generate a session secret and paste it into `backend/.env`:
 
 ```bash
-node -e "console.log(require('node:crypto').randomBytes(48).toString('base64url'))"
+docker run --rm node:24-trixie node -e "console.log(require('node:crypto').randomBytes(48).toString('base64url'))"
 ```
 
-Set `frontend/.env` to:
+`FRONTEND_ORIGIN=http://localhost` matches the Compose site. The frontend currently uses `/api` directly in [`api.js`](frontend/src/lib/api.js); `VITE_API_URL` is not read. Keep local `.env` files out of Git.
 
-```dotenv
-VITE_API_URL=http://localhost:4000/api
-```
+**Existing database:** changing `POSTGRES_PASSWORD` in Compose does not change the password inside an initialized PostgreSQL volume. Preserve your existing credentials when updating an existing setup. Do not delete the volume to resolve a password mismatch.
 
-The checked-in backend example uses different database credentials from Compose; copying it alone is insufficient. Use your own configuration and do not commit secrets.
-
-### 2. Build, start the database and initialize data
+### 2. Build and initialize
 
 ```bash
 docker compose build
@@ -104,126 +72,72 @@ docker compose up -d db
 docker compose exec db sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
 ```
 
-Wait until the readiness command reports that PostgreSQL is accepting connections. Then:
+Wait until PostgreSQL reports it is accepting connections, then:
 
 ```bash
 docker compose run --rm --no-deps backend npm run db:init
 docker compose up -d backend frontend
-docker compose ps
-```
-
-`db:init` runs migrations and seed data. The current seed uses guarded/conflict-safe inserts to preserve existing rows. For an existing database, migrations can be run separately with `npm run db:migrate`.
-
-### 3. Verify the actual API
-
-```bash
+bash scripts/healthcheck.sh http://localhost
 curl --fail http://localhost:4000/health
-curl --fail http://localhost:4000/api/profile
-curl --fail http://localhost:4000/api/skills
 ```
 
-Then open the public portfolio. A fallback page alone does not prove database connectivity; inspect the API responses and the page's data-source/error state.
+`db:init` applies migrations and initial seed data. Subsequent schema updates can use `docker compose exec backend npm run db:migrate` without reseeding.
 
-Optional: create or reset the local admin account:
+| Local URL | Purpose |
+| --- | --- |
+| `http://localhost` | Portfolio served by Nginx |
+| `http://localhost/admin` | Skills admin UI |
+| `http://localhost/api/skills` | API through the reverse proxy |
+| `http://localhost:4000/health` | API + database check directly on Express |
+
+Nginx currently proxies `/api/`, not `/health`; use port 4000 for the health endpoint. Open port 80 must be available on your machine.
+
+### 3. Optional admin setup and shutdown
 
 ```bash
 docker compose exec backend npm run auth:reset -- admin
-```
-
-This prompts for a password, stores its hash in PostgreSQL and invalidates existing sessions for that username. Admin access uses a database-backed session, an HTTP-only SameSite cookie and a CSRF token.
-
-### 4. Inspect and stop
-
-```bash
 docker compose logs --tail=100 backend
-docker compose logs --tail=100 frontend
 docker compose down
 ```
 
-The named volume is retained by `docker compose down`. Adding `--volumes` removes it and its database data.
+The admin command prompts for a password and stores a hash in PostgreSQL. `docker compose down` retains the named volume. Adding `--volumes` deletes its data. Local HTTP is for demonstration; use HTTPS before sending admin credentials over a public connection.
 
 ## Tests and builds
 
-Run the same backend test command as CI on the host:
-
 ```bash
-cd backend
-npm ci
-npm test
-cd ..
+npm --prefix backend ci
+npm --prefix backend test
+npm --prefix frontend ci
+npm --prefix frontend run build
 ```
 
-The checked-in suite contains three HTTP health tests with a **stubbed database**:
+The three checked-in tests use a stubbed database to verify `/health`: a successful query, a database failure without leaked error details, and recovery after failure. They do not prove a real PostgreSQL integration. The `test:integration` command currently points to a missing test file.
 
-1. A successful query returns HTTP 200 and connected database status.
-2. A failed query returns HTTP 500 without exposing internal error details.
-3. A later successful query recovers after a temporary failure.
+The frontend build also runs inside its Dockerfile during CI. The backend Dockerfile still starts Node in watch mode. CI uses Node 20, the backend container uses Node 24 and the frontend builder uses `node:latest`; version alignment remains a follow-up.
 
-PostgreSQL is not needed for this suite. It validates endpoint behaviour, not a real PostgreSQL connection. CI currently uses Node.js 20; the application Dockerfiles use Node.js 24.
+## Repository guide
 
-For a separate frontend production-build check:
-
-```bash
-cd frontend
-npm ci
-npm run build
-cd ..
-```
-
-That frontend build command is available locally but is **not a separate step in the current CI workflow**. The frontend Dockerfile starts Vite's development server.
-
-The `test:integration` script currently references a missing `backend/test/integration.test.js`. Do not treat it as a working integration suite until that file is implemented.
-
-## GitHub Actions and AWS
-
-Source: [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
-
-| Configuration | Current behaviour |
+| Path | Responsibility |
 | --- | --- |
-| Trigger | Every push to `master`; no pull-request trigger yet. |
-| Runner | `ubuntu-latest` |
-| Permissions | `contents: read` and `id-token: write` |
-| Repository variables | `AWS_ROLE_ARN`, `AWS_REGION` |
-| AWS login | OIDC role assumption followed by ECR login |
-| Checks | Backend `npm ci`, then `npm test` |
-| Packaging | `docker compose build` for frontend and backend |
-| Publishing | Both images pushed to the ECR repository `my-ecr` |
-| Image tags | `backend-v1.0`, `frontend-v1.0` |
-| Deployment | No EC2/SSM deployment step in this workflow yet. |
+| [`frontend/`](frontend/) | React UI, admin panel, multi-stage image, Nginx configuration |
+| [`backend/`](backend/) | Express API, authentication, migrations, seed data, health tests |
+| [`docker-compose.yml`](docker-compose.yml) | Local three-service stack and persistent database volume |
+| [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Test, build, publish and SSM command workflow |
+| [`scripts/healthcheck.sh`](scripts/healthcheck.sh) | Homepage and API smoke checks; currently run manually |
+| [`docs/deployment.md`](docs/deployment.md) | AWS flow, required configuration and deployment limits |
+| [`docs/evidence.md`](docs/evidence.md) | Verifiable run, image digests and claim boundaries |
+| [`docs/showcase.md`](docs/showcase.md) | Project description, LinkedIn draft and demonstration outline |
 
-To use the workflow in your own AWS account:
+## Next engineering improvements
 
-- Create the ECR repository and an IAM role with the required ECR push permissions.
-- Configure the IAM role's OIDC trust for your repository and `master` branch.
-- Set `AWS_ROLE_ARN` and `AWS_REGION` under repository **Settings → Secrets and variables → Actions → Variables**.
-- Replace the hard-coded registry/repository URLs in the tag and push commands. Changing `AWS_REGION` alone does not update those URLs.
-- Keep AWS credentials and session secrets out of source control.
+1. Wait for the SSM result, fail Actions on remote failure and verify the homepage and database-backed API after deployment.
+2. Publish immutable commit-SHA image tags and retain a tested rollback target; current `v2.0` tags are reused.
+3. Restrict database/API exposure, pin runtime/database versions, align Node versions and use HTTPS.
+4. Add real PostgreSQL integration coverage and pull-request checks.
+5. Extend this same project with Terraform, monitoring, tested rollback and backup/restore evidence.
 
-ECR stores the images. A separate deployment step is needed to run a new version on EC2. ECR storage and later AWS compute/monitoring can incur charges.
+This is a personal learning project on a single EC2 host, not a highly available service. AWS resources can incur ongoing charges. Environment files have been removed from the current source tree; any real credentials previously committed must still be rotated because Git history retains them.
 
-## Repository map
+---
 
-| Location | Responsibility |
-| --- | --- |
-| `frontend/` | React/Vite UI, admin panel and frontend Dockerfile |
-| `backend/src/` | Express routes, database access, authentication and validation |
-| `backend/migrations/` | Versioned schema changes |
-| `backend/sql/seed.sql` | Initial portfolio data |
-| `backend/test/health.test.js` | Mocked health-endpoint tests |
-| `docker-compose.yml` | Local frontend, backend and PostgreSQL services |
-| `.github/workflows/ci.yml` | Test, build and ECR publishing workflow |
-| `docs/architecture/` | Pipeline diagram in PNG and editable SVG |
-
-Component guides: [backend](backend/README.md) and [frontend](frontend/README.md).
-
-## Known limitations and next steps
-
-- **Secrets:** `.env` files are currently tracked. Remove them from tracking, ignore future local environment files and rotate any real exposed credentials. Removing the latest file does not erase Git history.
-- **Local database configuration:** Compose includes a development password, publishes port 5432 and uses an unpinned `postgres` image. Use controlled versions and private database access before public deployment.
-- **Development images:** replace Vite/Node watch-mode images with production serving and runtime configurations.
-- **Repeatable releases:** replace reused `v1.0` tags with commit-SHA tags or digests.
-- **CI coverage:** add pull-request checks, a frontend production-build step and real database integration tests. Align Node versions.
-- **Operations:** add Terraform-managed AWS infrastructure, an explicit deployment command, health verification, monitoring, rollback and a tested PostgreSQL backup/restore.
-
-This is an evolving personal project. Completed milestones are backed by repository code and linked workflow evidence; planned work is listed separately.
-
+**Utkarsh Singh Rajawat** | [LinkedIn](https://linkedin.com/in/utkarsh-singh-rajawat) | [GitHub](https://github.com/shreyan21)

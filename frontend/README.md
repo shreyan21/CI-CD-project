@@ -11,11 +11,12 @@ React + Vite public portfolio and skills admin UI.
 | `npm run build` | Build static production assets |
 | `npm run preview` | Preview the built assets locally |
 
-- Public site: `http://localhost:5173`
-- Admin UI: `http://localhost:5173/admin`
-- API base: `VITE_API_URL=http://localhost:4000/api`
+- Compose public site: `http://localhost`
+- Compose admin UI: `http://localhost/admin`
+- API base: `/api`, defined in `src/lib/api.js`
 
-The browser uses the host API URL, not the Compose service name. Keep the frontend and API hostname consistent for admin cookies. `VITE_` values reach browser code and must not contain secrets.
+Nginx forwards `/api/` to `http://backend:4000`. The browser does not resolve Compose service names. Keep the frontend and API on the same origin for admin cookies. `VITE_API_URL` is not currently read by the code; `VITE_` values must never contain secrets.
 
-The current Dockerfile runs Vite's development server. A production frontend build is a separate local command and is not yet a dedicated CI step.
+The Dockerfile uses a Node build stage to run `npm run build`, then copies `dist/` into Nginx. This build is executed when CI builds the frontend image. A standalone Vite dev server still uses port 5173, but needs an API proxy/configuration for `/api` and is not the documented Compose runtime.
+
 
