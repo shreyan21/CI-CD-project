@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<title>Portfolio Delivery on AWS</title>
+<desc>GitHub Actions tests and builds frontend and backend images, publishes to ECR, and submits SSM deployment commands. EC2 runs Nginx, Express and PostgreSQL. Remote completion and health verification are follow-up work.</desc>
+<rect width="1600" height="1100" fill="#0b1220"/>
+<text x="64" y="63.8" fill="#58d7dd" font-family="DejaVu Sans,Arial,sans-serif" font-size="20" font-weight="700">UTKARSH SINGH RAJAWAT / PERSONAL PROJECT</text>
+<text x="60" y="158.56" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="64" font-weight="700">Portfolio Delivery on AWS</text>
+<text x="64" y="220.33" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="27" font-weight="400">React + Express + PostgreSQL | Docker | GitHub Actions</text>
+<text x="64" y="295.8" fill="#58d7dd" font-family="DejaVu Sans,Arial,sans-serif" font-size="20" font-weight="700">01 / DELIVERY AUTOMATION</text>
+<rect x="64" y="330" width="460" height="205" rx="16" fill="#142238" stroke="#29415e" stroke-width="2"/>
+<rect x="580" y="330" width="460" height="205" rx="16" fill="#142238" stroke="#29415e" stroke-width="2"/>
+<rect x="1096" y="330" width="440" height="205" rx="16" fill="#142238" stroke="#29415e" stroke-width="2"/>
+<text x="90" y="383.28" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="32" font-weight="700">GitHub Actions</text>
+<text x="90" y="428.17" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="23" font-weight="400">Backend health tests</text>
+<text x="90" y="466.17" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="23" font-weight="400">Two Docker image builds</text>
+<text x="90" y="504.59" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="21" font-weight="400">AWS role via GitHub OIDC</text>
+<path d="M527,430 L576,430" stroke="#58d7dd" stroke-width="3"/>
+<polygon points="566,423 566,437 576,430" fill="#58d7dd"/>
+<text x="607" y="383.28" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="32" font-weight="700">Amazon ECR</text>
+<text x="607" y="428.17" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="23" font-weight="400">Frontend + backend images</text>
+<text x="607" y="470.17" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="23" font-weight="400">Versioned v2.0 tags</text>
+<text x="607" y="506.59" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="21" font-weight="400">Published artifacts</text>
+<path d="M1044,430 L1092,430" stroke="#58d7dd" stroke-width="3"/>
+<polygon points="1082,423 1082,437 1092,430" fill="#58d7dd"/>
+<text x="1124" y="380.91" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="29" font-weight="700">Systems Manager</text>
+<text x="1124" y="429.38" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="22" font-weight="400">EC2 deployment commands</text>
+<text x="1124" y="469.38" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="22" font-weight="400">Update services + migrate</text>
+<text x="1124" y="506.59" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="21" font-weight="400">Command submission</text>
+<text x="64" y="610.8" fill="#58d7dd" font-family="DejaVu Sans,Arial,sans-serif" font-size="20" font-weight="700">02 / APPLICATION RUNTIME</text>
+<path d="M810,542 L810,660" stroke="#58d7dd" stroke-width="3"/>
+<polygon points="803,650 817,650 810,660" fill="#58d7dd"/>
+<text x="835" y="586.8" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="20" font-weight="400">EC2 pulls images</text>
+<path d="M1320,542 L1320,660" stroke="#58d7dd" stroke-width="3"/>
+<polygon points="1313,650 1327,650 1320,660" fill="#58d7dd"/>
+<text x="1340" y="586.01" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="19" font-weight="400">Run commands</text>
+<rect x="64" y="660" width="1472" height="246" rx="16" fill="#0f1b2d" stroke="#29415e" stroke-width="2"/>
+<text x="90" y="698.01" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="19" font-weight="700">EC2 / DOCKER COMPOSE</text>
+<rect x="90" y="729" width="428" height="142" rx="16" fill="#192b42" stroke="#29415e" stroke-width="2"/>
+<rect x="586" y="729" width="428" height="142" rx="16" fill="#192b42" stroke="#29415e" stroke-width="2"/>
+<rect x="1082" y="729" width="428" height="142" rx="16" fill="#192b42" stroke="#29415e" stroke-width="2"/>
+<text x="113" y="772.91" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="29" font-weight="700">Nginx + React</text>
+<text x="113" y="817.17" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="23" font-weight="400">Static site :80</text>
+<text x="113" y="852.8" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="20" font-weight="400">Same-origin /api proxy</text>
+<path d="M525,799 L578,799" stroke="#58d7dd" stroke-width="3"/>
+<polygon points="568,792 568,806 578,799" fill="#58d7dd"/>
+<text x="609" y="772.91" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="29" font-weight="700">Express API</text>
+<text x="609" y="817.17" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="23" font-weight="400">backend:4000</text>
+<text x="609" y="852.8" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="20" font-weight="400">Profile + skills + admin</text>
+<path d="M1021,799 L1074,799" stroke="#58d7dd" stroke-width="3"/>
+<polygon points="1064,792 1064,806 1074,799" fill="#58d7dd"/>
+<text x="1105" y="772.91" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="29" font-weight="700">PostgreSQL</text>
+<text x="1105" y="817.17" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="23" font-weight="400">db:5432</text>
+<text x="1105" y="852.8" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="20" font-weight="400">Persistent named volume</text>
+<rect x="64" y="939" width="1472" height="84" rx="12" fill="#1c2535" stroke="#52627a" stroke-width="2"/>
+<text x="86" y="975.96" fill="#f1ce86" font-family="DejaVu Sans,Arial,sans-serif" font-size="24" font-weight="700">NEXT: wait for SSM completion + verify application health</text>
+<text x="86" y="1007.8" fill="#b9c8da" font-family="DejaVu Sans,Arial,sans-serif" font-size="20" font-weight="400">A successful command submission is not a completed release.</text>
+<text x="64" y="1072.38" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="22" font-weight="400">github.com/shreyan21/CI-CD-project</text>
+<text x="1170" y="1069.22" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="18" font-weight="400">IMPLEMENTATION / OCT 2026</text>
+</svg>
