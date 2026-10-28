@@ -45,6 +45,11 @@ jobs:
 
       - name: Running docker compose
         run: |
+         # Compose loads env_file entries even for builds. Use examples only;
+         # deployment configuration stays on the EC2 host.
+         cp .env.example .env
+         cp backend/.env.example backend/.env
+         cp frontend/.env.example frontend/.env
          docker compose build
          docker tag backend:v1.0 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr:backend-v2.0
          docker tag frontend:v1.0 891377368653.dkr.ecr.ap-south-1.amazonaws.com/my-ecr:frontend-v2.0
@@ -76,3 +81,4 @@ jobs:
     
          
          
+
