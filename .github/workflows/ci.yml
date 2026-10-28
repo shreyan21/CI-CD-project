@@ -54,10 +54,24 @@ jobs:
       - name: Sending commands to SSM agent on EC2
         run: |
           
-          aws ssm send-command \
+          COMMAND_ID=$(aws ssm send-command \
                --instance-ids "${{vars.AWS_INSTANCE_ID}}" \
                --document-name "AWS-RunShellScript" \
-               --parameters 'commands=["set -e ","cd /home/ubuntu","aws ecr get-login-password --region ${{vars.AWS_REGION}} | docker login --username AWS --password-stdin ${{vars.ECR_REGISTRY}}","docker compose up -d db","docker compose up -d --pull always --no-deps frontend backend","docker compose exec -T backend npm run db:migrate"]'
+               --parameters 'commands=["set -e ","cd /home/ubuntu","aws ecr get-login-password --region ${{vars.AWS_REGION}} | docker login --username AWS --password-stdin ${{vars.ECR_REGISTRY}}","docker compose up -d db","docker compose up -d --pull always --no-deps frontend backend","docker compose exec -T backend npm run db:migrate"]')
+
+          set +e
+
+          aws ssm wait command-executed \
+                --command-id "$COMMAND_ID" \
+                --instance-id "${{vars.AWS_INSTANCE_ID}}"
+
+          WAIT_STATUS=$?
+          set -e
+          aws ssm get-command-execution \
+                --command-id "$COMMAND_ID" \
+                --instance-id "${{vars.AWS_INSTANCE_ID}}"
+
+          EXIT "$WAIT_STATUS"
          
     
          
