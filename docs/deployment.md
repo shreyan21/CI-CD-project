@@ -8,9 +8,9 @@ A push to `master` starts [`.github/workflows/ci.yml`](../.github/workflows/ci.y
 
 The frontend Dockerfile runs `npm run build`, then copies the output to Nginx. The backend image starts Node with watch mode. Images are currently published under the reused tags `backend-v2.0` and `frontend-v2.0`.
 
-The final workflow step submits `AWS-RunShellScript` to the configured EC2 instance. Its commands enter `/home/ubuntu`, log in to ECR, start the database, pull/update frontend and backend containers, and execute `npm run db:migrate`.
+The final workflow step runs `scripts/deploy.sh`. It sends `AWS-RunShellScript` to the configured EC2 instance, writes the shared health-only `docker-compose.override.yml` in `/home/ubuntu`, logs in to ECR and pulls both application images. Docker waits for PostgreSQL and the backend to become healthy, the script runs migrations, and Docker then starts/checks the frontend.
 
-The workflow currently ends after command submission. It does not wait for SSM to finish, capture remote stdout/stderr, verify application health, or perform automatic rollback.
+The script waits for the remote SSM result, prints its output and fails Actions on remote failure or timeout. The health checks run through Docker; there is no separate manual HTTP-check script. Automatic rollback is not implemented.
 
 ## Configuration
 
@@ -27,17 +27,19 @@ GitHub needs ECR push and scoped SSM command permissions. The EC2 host needs a w
 
 ## The EC2 host has its own Compose configuration
 
-The workflow does not copy the repository's Compose file or `.env` files to EC2. It runs the files already present in `/home/ubuntu`.
+The workflow keeps the existing base `docker-compose.yml` and `.env` files on EC2. It sends only the health-only `docker-compose.override.yml`, which Docker merges with the existing base file. This preserves the host's image URLs, credential paths and database volume configuration.
 
 The checked-in Compose file is for local builds and names its images `backend:v1.0` and `frontend:v1.0`. The host's Compose file must instead reference the ECR image URLs/tags that the workflow publishes. Do not replace the host's file with the local file without adapting it. Keep the existing database volume, credentials and mount layout when updating a running environment.
 
-For fresh local checkouts, CI now copies example environment files before `docker compose build`. The examples exist only to satisfy Compose configuration loading and contain no deployment credentials. Runtime configuration stays on the host.
+CI builds the frontend and backend directly from their Dockerfiles and neither reads nor creates runtime `.env` files. For local Compose use, manually create the root `.env` for the database password and `backend/.env` for backend settings. The frontend needs no environment file. Existing EC2 runtime configuration stays on the host.
 
 ## Verification still needed for a complete release claim
 
-- Capture the SSM `CommandId`, wait for terminal status, and surface remote failures in Actions.
-- Check the Nginx homepage, `/api/skills` JSON and the backend `/health` response after the update.
+- Capture a new deployed run proving SSM completion and all three Docker services healthy.
+- Verify the public website and browser/admin flow separately. Internal HTTP checks do not verify external access or allowed browser origins.
 - Confirm both running image digests match the intended ECR release. Reused tags alone do not identify a commit.
 - Record a successful migration result and a safe prior-image recovery procedure. Image rollback does not reverse schema migrations.
 
-The existing [smoke-check script](../scripts/healthcheck.sh) checks the homepage and the content type returned by `/api/skills`; it is not yet called by the workflow. Nginx does not currently proxy `/health`.
+Health definitions live in [`docker-compose.override.yml`](../docker-compose.override.yml). PostgreSQL uses its standard `pg_isready`; the backend uses its existing `/health` endpoint; Nginx uses its bundled `wget` to check `/` and `/api/skills`. Docker manages retries, timing and status. View the result with `docker compose ps`. The frontend starts after migrations so a fresh database's missing tables do not cause a false deployment failure. Nginx does not currently proxy `/health`.
+
+The existing `/health` implementation and its unit tests remain: they provide the backend probe and check its code behaviour, respectively. Docker is the single operational health-check mechanism. Health checks mark failures but do not automatically restart an unhealthy container or perform rollback.

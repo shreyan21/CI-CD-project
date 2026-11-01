@@ -24,7 +24,6 @@ services:
     frontend:
         build: ./frontend/
         image: frontend:v1.0
-        env_file: ./frontend/.env 
         ports:
           - '80:80'
         depends_on: 
