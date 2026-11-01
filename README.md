@@ -15,10 +15,10 @@ I built a React, Express and PostgreSQL portfolio, containerized it with Docker 
 - **Application delivery:** one personally built product, two application images and a persistent PostgreSQL database.
 - **Container networking:** Nginx forwards browser requests from `/api/` to `backend:4000`; Express connects to `db:5432`.
 - **AWS authentication:** GitHub OIDC assumes an IAM role for the workflow; no long-lived AWS access-key inputs are configured in the workflow.
-- **Automation:** a push to `master` runs three backend health tests, builds both images, publishes to ECR and updates EC2 through SSM, applies migrations and waits for Docker service health checks.
+- **Automation:** a push to `master` runs three backend health tests, builds both images, publishes to ECR and sends EC2 deployment commands through SSM, applies migrations and waits for the command result.
 - **Troubleshooting:** the health endpoint checks the database; its tests cover success, failure and recovery. The UI marks fallback data when live API requests fail.
 
-**Evidence boundary:** the linked historical Actions run verifies tests, both image pushes and SSM command submission. The current source adds SSM completion and Docker health checks; a new deployed run is needed to prove that path on EC2. See the [evidence record](docs/evidence.md).
+**Evidence boundary:** the linked historical Actions run verifies tests, both image pushes and SSM command submission. The current workflow waits for SSM completion and prints its result. It does not automatically check HTTP application health afterward. See the [evidence record](docs/evidence.md).
 
 ## Application architecture
 
@@ -37,7 +37,7 @@ The public page reads profile, skills, experience and certifications through the
 | Frontend | React + Vite; static build served by Nginx; SPA routing and `/api/` reverse proxy |
 | API | Node.js + Express; validation, request limits, PostgreSQL queries and `/health` |
 | Data | Four versioned migrations, guarded/conflict-safe seed inserts, named Docker volume |
-| CI/CD | GitHub Actions on `master`; backend tests, image builds, ECR publishing, SSM deployment and Docker health checks |
+| CI/CD | GitHub Actions on `master`; backend tests, image builds, ECR publishing and SSM deployment with command results |
 | AWS | ECR image registry; deployment target is an existing EC2 host with SSM |
 
 ## Run locally
@@ -67,15 +67,22 @@ docker run --rm node:24-trixie node -e "console.log(require('node:crypto').rando
 
 ```bash
 docker compose build
-docker compose up -d --wait --wait-timeout 120 db backend
-docker compose exec -T backend npm run db:init
-docker compose up -d --wait --wait-timeout 120 frontend
-docker compose ps
+docker compose up -d db
+docker compose exec db sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+```
+
+When PostgreSQL reports that it is accepting connections:
+
+```bash
+docker compose run --rm --no-deps backend npm run db:init
+docker compose up -d backend frontend
+bash scripts/healthcheck.sh http://localhost
+curl --fail http://localhost:4000/health
 ```
 
 `db:init` applies migrations and initial seed data. Subsequent schema updates can use `docker compose exec backend npm run db:migrate` without reseeding.
 
-Docker automatically loads `docker-compose.override.yml`. Its built-in health system checks PostgreSQL readiness, the backend's database connection, and the Nginx homepage plus `/api/skills` every ten seconds. `docker compose ps` shows `starting`, `healthy` or `unhealthy`; `up --wait` fails if the services do not become healthy before the deadline. These checks do not test admin login, browser-origin permissions or public network reachability.
+Health checks are manual: `scripts/healthcheck.sh` checks the homepage and API JSON response; `/health` checks the backend's database connection. CI still runs the existing unit tests. No automatic container health-check framework is configured.
 
 | Local URL | Purpose |
 | --- | --- |
@@ -119,15 +126,14 @@ The frontend build also runs inside its Dockerfile during CI. The backend Docker
 | [`backend/`](backend/) | Express API, authentication, migrations, seed data, health tests |
 | [`docker-compose.yml`](docker-compose.yml) | Local three-service stack and persistent database volume |
 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Test, build, publish and SSM command workflow |
-| [`docker-compose.override.yml`](docker-compose.override.yml) | Shared automatic Docker health checks for local use and EC2 |
-| [`scripts/deploy.sh`](scripts/deploy.sh) | SSM deployment, migrations and Docker health waiting |
+| [`scripts/healthcheck.sh`](scripts/healthcheck.sh) | Simple manual homepage and API checks |
 | [`docs/deployment.md`](docs/deployment.md) | AWS flow, required configuration and deployment limits |
 | [`docs/evidence.md`](docs/evidence.md) | Verifiable run, image digests and claim boundaries |
 | [`docs/showcase.md`](docs/showcase.md) | Project description, LinkedIn draft and demonstration outline |
 
 ## Next engineering improvements
 
-1. Record a new EC2 run proving the Docker health checks, then add browser/admin and external availability checks.
+1. Add simple automated HTTP checks after deployment when needed; verify browser/admin and external availability separately.
 2. Publish immutable commit-SHA image tags and retain a tested rollback target; current `v2.0` tags are reused.
 3. Restrict database/API exposure, pin runtime/database versions, align Node versions and use HTTPS.
 4. Add real PostgreSQL integration coverage and pull-request checks.
