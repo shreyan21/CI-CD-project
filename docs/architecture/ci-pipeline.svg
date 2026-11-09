@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-labelledby="title desc">
 <title id="title">Portfolio CI pipeline</title>
-<desc id="desc">A push to master triggers GitHub Actions backend tests, then Docker Compose builds frontend and backend images which are published to Amazon ECR. AWS authentication uses OIDC. Health tests use a mocked database. Deployment is the next milestone.</desc>
+<desc id="desc">A push to master triggers GitHub Actions backend tests and Docker image builds. The frontend and backend images are published to Amazon ECR. AWS authentication uses OIDC. The workflow submits deployment commands to EC2 through AWS Systems Manager.</desc>
 <rect width="1200" height="1200" fill="#0B1220"/>
 <text x="70" y="64.2" fill="#63D8B1" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="700">PROJECT UPDATE  /  CURRENT CI MILESTONE</text>
 <text x="70" y="155.2" fill="#FFFFFF" font-family="DejaVu Sans, sans-serif" font-size="64" font-weight="700">Code in. Images out.</text>
@@ -47,7 +47,7 @@
 <text x="70" y="1000.0" fill="#FFFFFF" font-family="DejaVu Sans, sans-serif" font-size="25" font-weight="700">Health tests: success • failure • recovery</text>
 <text x="70" y="1040.8" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="400">Endpoint behavior tested with a mocked database.</text>
 <polyline points="70,1080 1130,1080" fill="none" stroke="#2C4059" stroke-width="2" stroke-linejoin="round"/>
-<text x="70" y="1119.0" fill="#F4BD76" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="700">NEXT: AWS deployment + post-deployment health checks</text>
+<text x="70" y="1119.0" fill="#F4BD76" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="700">DEPLOYMENT TARGET: Amazon EC2 via AWS Systems Manager</text>
 <text x="70" y="1164.4" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="400">Utkarsh Singh Rajawat</text>
 <text x="525" y="1164.4" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="400">github.com/shreyan21/CI-CD-project</text>
 </svg>
