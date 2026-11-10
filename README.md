@@ -15,10 +15,10 @@ I built a React, Express and PostgreSQL portfolio, containerized it with Docker 
 - **Application delivery:** one personally built product, two application images and a persistent PostgreSQL database.
 - **Container networking:** Nginx forwards browser requests from `/api/` to `backend:4000`; Express connects to `db:5432`.
 - **AWS authentication:** GitHub OIDC assumes an IAM role for the workflow; no long-lived AWS access-key inputs are configured in the workflow.
-- **Automation:** a push to `master` runs backend tests, builds both images, publishes to ECR and submits EC2 deployment commands through SSM. The remote commands update the application containers and run database migrations.
+- **Automation:** a push to `master` runs three backend health tests, builds both images, publishes to ECR and sends EC2 deployment commands through SSM, applies migrations and waits for the command result.
 - **Troubleshooting:** the health endpoint checks the database; its tests cover success, failure and recovery. The UI marks fallback data when live API requests fail.
 
-The linked historical Actions run records tests, both image pushes and SSM command submission. See the [evidence record](docs/evidence.md).
+**Evidence boundary:** the linked historical Actions run verifies tests, both image pushes and SSM command submission. The current workflow waits for SSM completion and prints its result. It does not automatically check HTTP application health afterward. See the [evidence record](docs/evidence.md).
 
 ## Application architecture
 
@@ -37,7 +37,7 @@ The public page reads profile, skills, experience and certifications through the
 | Frontend | React + Vite; static build served by Nginx; SPA routing and `/api/` reverse proxy |
 | API | Node.js + Express; validation, request limits, PostgreSQL queries and `/health` |
 | Data | Four versioned migrations, guarded/conflict-safe seed inserts, named Docker volume |
-| CI/CD | GitHub Actions on `master`; backend tests, image builds, ECR publishing and EC2 deployment command submission through SSM |
+| CI/CD | GitHub Actions on `master`; backend tests, image builds, ECR publishing and SSM deployment with command results |
 | AWS | ECR image registry; deployment target is an existing EC2 host with SSM |
 
 ## Run locally
@@ -133,10 +133,11 @@ The frontend build also runs inside its Dockerfile during CI. The backend Docker
 
 ## Next engineering improvements
 
-1. Publish immutable commit-SHA image tags and retain a tested rollback target. The current `v2.0` tags are reused.
-2. Restrict database/API exposure, pin runtime/database versions, align Node versions and use HTTPS.
-3. Add real PostgreSQL integration coverage and pull-request checks.
-4. Extend this same project with Terraform, monitoring, tested rollback and backup/restore evidence.
+1. Add simple automated HTTP checks after deployment when needed; verify browser/admin and external availability separately.
+2. Publish immutable commit-SHA image tags and retain a tested rollback target; current `v2.0` tags are reused.
+3. Restrict database/API exposure, pin runtime/database versions, align Node versions and use HTTPS.
+4. Add real PostgreSQL integration coverage and pull-request checks.
+5. Extend this same project with Terraform, monitoring, tested rollback and backup/restore evidence.
 
 This is a personal learning project on a single EC2 host, not a highly available service. AWS resources can incur ongoing charges. Environment files have been removed from the current source tree; any real credentials previously committed must still be rotated because Git history retains them.
 

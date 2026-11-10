@@ -37,4 +37,4 @@ The owner has run the portfolio on EC2. The previously supplied public address w
 
 ## Add the next proof
 
-A short demo can show the website, a source change, the workflow and a database-backed response. Record the running image digests to connect the demo to the release. Redact secrets and admin cookies from all recordings.
+Capture one remote SSM result with `Success`, matching running image digests and healthy API responses. A short demo should show the website, a source change, the workflow, the resulting release and a database-backed response. Redact secrets and admin cookies from all recordings.

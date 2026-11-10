@@ -10,7 +10,7 @@ The frontend Dockerfile runs `npm run build`, then copies the output to Nginx. T
 
 The final workflow step sends `AWS-RunShellScript` directly to EC2. Its commands enter `/home/ubuntu`, log in to ECR, start the database, pull/update the frontend and backend with `docker compose -f docker-compose.yml up -d --pull always --no-deps frontend backend`, then run migrations.
 
-The final step logs the SSM command ID once AWS accepts the request. The remaining deployment work runs asynchronously on EC2.
+The workflow captures the SSM command ID, waits for its result and prints the output. The AWS CLI waiter has a short built-in limit, so a long image download can time out before the remote command finishes. Automatic HTTP health checks and rollback are not configured.
 
 ## Configuration
 
@@ -35,11 +35,12 @@ CI builds the frontend and backend directly from their Dockerfiles and neither r
 
 ## Verification still needed for a complete release claim
 
+- Capture the SSM result, then check the homepage, API and backend `/health` response manually.
 - Verify the public website and browser/admin flow separately. Internal HTTP checks do not verify external access or allowed browser origins.
 - Confirm both running image digests match the intended ECR release. Reused tags alone do not identify a commit.
 - Record a successful migration result and a safe prior-image recovery procedure. Image rollback does not reverse schema migrations.
 
-For manual troubleshooting, [`scripts/healthcheck.sh`](../scripts/healthcheck.sh) checks the homepage and API. The backend's `/health` endpoint checks PostgreSQL connectivity and is available directly on Express.
+The existing [`scripts/healthcheck.sh`](../scripts/healthcheck.sh) provides simple manual homepage and API checks. The backend's `/health` endpoint checks PostgreSQL connectivity. The workflow does not run these HTTP checks automatically. Nginx does not currently proxy `/health`.
 
 ## How EC2 gets the new image
 

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
 <title>Portfolio Delivery on AWS</title>
-<desc>GitHub Actions tests the backend, builds frontend and backend images, publishes them to ECR, and submits SSM deployment commands. EC2 runs Nginx, Express and PostgreSQL.</desc>
+<desc>GitHub Actions tests and builds frontend and backend images, publishes to ECR, and submits SSM deployment commands. EC2 runs Nginx, Express and PostgreSQL. Remote completion and health verification are follow-up work.</desc>
 <rect width="1600" height="1100" fill="#0b1220"/>
 <text x="64" y="63.8" fill="#58d7dd" font-family="DejaVu Sans,Arial,sans-serif" font-size="20" font-weight="700">UTKARSH SINGH RAJAWAT / PERSONAL PROJECT</text>
 <text x="60" y="158.56" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="64" font-weight="700">Portfolio Delivery on AWS</text>
@@ -51,8 +51,8 @@
 <text x="1105" y="817.17" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="23" font-weight="400">db:5432</text>
 <text x="1105" y="852.8" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="20" font-weight="400">Persistent named volume</text>
 <rect x="64" y="939" width="1472" height="84" rx="12" fill="#1c2535" stroke="#52627a" stroke-width="2"/>
-<text x="86" y="975.96" fill="#f1ce86" font-family="DejaVu Sans,Arial,sans-serif" font-size="24" font-weight="700">AWS DEPLOYMENT COMMAND SUBMISSION</text>
-<text x="86" y="1007.8" fill="#b9c8da" font-family="DejaVu Sans,Arial,sans-serif" font-size="20" font-weight="400">GitHub Actions submits the deployment command through AWS Systems Manager.</text>
+<text x="86" y="975.96" fill="#f1ce86" font-family="DejaVu Sans,Arial,sans-serif" font-size="24" font-weight="700">NEXT: wait for SSM completion + verify application health</text>
+<text x="86" y="1007.8" fill="#b9c8da" font-family="DejaVu Sans,Arial,sans-serif" font-size="20" font-weight="400">A successful command submission is not a completed release.</text>
 <text x="64" y="1072.38" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="22" font-weight="400">github.com/shreyan21/CI-CD-project</text>
 <text x="1170" y="1069.22" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="18" font-weight="400">IMPLEMENTATION / OCT 2026</text>
 </svg>
