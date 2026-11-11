@@ -1,24 +1,26 @@
-# Portfolio Delivery on AWS
+# Portfolio Delivery on AWS | Docker & GitHub Actions CI/CD
 
 **A personal portfolio that also demonstrates how I package, test and release an application.**
 
-I built a React, Express and PostgreSQL portfolio, containerized it with Docker Compose, and added GitHub Actions to test the API, build two images, publish them to Amazon ECR and send deployment commands to EC2 through AWS Systems Manager. The frontend uses a multi-stage Docker build and Nginx to serve React and proxy API requests.
+I built a React, Express and PostgreSQL portfolio, containerized it with Docker Compose, and added GitHub Actions to test the API, build two images, publish them to Amazon ECR and deploy to EC2 through AWS Systems Manager, wait for remote command success and print the invocation result for troubleshooting. The frontend uses a multi-stage Docker build and Nginx to serve React and proxy API requests.
 
 [![Workflow status](https://github.com/shreyan21/CI-CD-project/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/shreyan21/CI-CD-project/actions/workflows/ci.yml)
 
-[Inspect a successful run](https://github.com/shreyan21/CI-CD-project/actions/runs/40129948952) | [Read the workflow](.github/workflows/ci.yml) | [Run locally](#run-locally) | [Deployment notes](docs/deployment.md) | [Evidence](docs/evidence.md)
+[Inspect a successful run](https://github.com/shreyan21/CI-CD-project/actions/runs/42828479298) | [Read the workflow](.github/workflows/ci.yml) | [Run locally](#run-locally) | [Deployment notes](docs/deployment.md) | [Evidence](docs/evidence.md)
 
-![Portfolio delivery architecture: GitHub Actions tests and builds two images, publishes to ECR, and submits an SSM deployment command; EC2 runs Nginx, Express and PostgreSQL](docs/architecture/delivery-overview.png)
+![Portfolio delivery architecture: GitHub Actions tests and builds two images, publishes to ECR, and waits for the SSM deployment result; EC2 runs Nginx, Express and PostgreSQL](docs/architecture/delivery-overview.png)
 
 ## What this project demonstrates
 
 - **Application delivery:** one personally built product, two application images and a persistent PostgreSQL database.
 - **Container networking:** Nginx forwards browser requests from `/api/` to `backend:4000`; Express connects to `db:5432`.
 - **AWS authentication:** GitHub OIDC assumes an IAM role for the workflow; no long-lived AWS access-key inputs are configured in the workflow.
-- **Automation:** a push to `master` runs three backend health tests, builds both images, publishes to ECR and sends EC2 deployment commands through SSM, applies migrations and waits for the command result.
+- **Automation:** a push to `master` runs three backend health tests, builds both images, publishes to ECR and sends EC2 deployment commands through SSM, applies migrations, waits with `aws ssm wait command-executed` and prints status, response code, stdout and stderr with `aws ssm get-command-invocation`. The step preserves the waiter's exit status.
 - **Troubleshooting:** the health endpoint checks the database; its tests cover success, failure and recovery. The UI marks fallback data when live API requests fail.
 
-**Evidence boundary:** the linked historical Actions run verifies tests, both image pushes and SSM command submission. The current workflow waits for SSM completion and prints its result. It does not automatically check HTTP application health afterward. See the [evidence record](docs/evidence.md).
+**Verified on 10 November 2026:** the linked Actions run passed all three tests, published both images and returned SSM `Success` with `ResponseCode: 0`; migration output confirmed the database was up to date. The workflow does not automatically check HTTP application health afterward. See the [evidence record](docs/evidence.md).
+
+**Demo status (11 November 2026):** the owner has stopped EC2, so the live demo is offline. Source, architecture and the recorded successful run remain available.
 
 ## Application architecture
 

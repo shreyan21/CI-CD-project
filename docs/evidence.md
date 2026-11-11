@@ -2,39 +2,46 @@
 
 [Back to project overview](../README.md)
 
-Reviewed against commit [`03acc4c`](https://github.com/shreyan21/CI-CD-project/commit/03acc4c5a683d5d3f4f4b6569ec0eafe0efd5fda), with the workflow completed on **25 October 2026 at 02:01 IST** (24 October 2026 at 20:31 UTC).
+## Latest verified delivery — 10 November 2026
 
-## Inspectable result
-
-[GitHub Actions run 40129948952](https://github.com/shreyan21/CI-CD-project/actions/runs/40129948952) completed successfully. Its job steps and logs show backend tests, frontend/backend Docker builds, two ECR pushes and SSM command submission.
+Reviewed [Actions run 42828479298](https://github.com/shreyan21/CI-CD-project/actions/runs/42828479298) and [job 129888177385](https://github.com/shreyan21/CI-CD-project/actions/runs/42828479298/job/129888177385) for commit [`f7be00a`](https://github.com/shreyan21/CI-CD-project/commit/f7be00a8da620297a5606e6f933fd9ab08a73fe5). The job completed successfully on **10 November 2026 at 19:52 IST** (14:22 UTC).
 
 | Claim | Evidence | Limit |
 | --- | --- | --- |
-| Backend health tests pass | `Running tests` step; [`health.test.js`](../backend/test/health.test.js) | Three tests use a stubbed database |
-| Frontend static build exists | [`frontend/Dockerfile`](../frontend/Dockerfile); successful Docker build | No UI/browser regression suite |
-| Both application images published | Successful ECR push logs and digests below | Tags are mutable |
-| GitHub authenticates through OIDC | [`ci.yml`](../.github/workflows/ci.yml) role assumption and `id-token: write` | IAM policies/trust were not audited |
-| SSM deployment automation is implemented | `Sending commands to SSM agent on EC2` step | Log returns `Pending`, `CompletedCount: 0`; no terminal execution result |
-| Runtime architecture is implemented in source | Compose, Nginx, Express routes and PostgreSQL migrations | Source inspection is not a current public availability test |
+| Backend health unit tests pass | Running tests: 3 tests, 3 passed, 0 failed; [health.test.js](../backend/test/health.test.js) | The database is stubbed; this is not a real PostgreSQL integration suite |
+| Both application images build and publish | Successful frontend/backend builds and ECR push digests below | Image tags are mutable |
+| GitHub authenticates through OIDC | [ci.yml](../.github/workflows/ci.yml), role assumption and `id-token: write` | IAM policies/trust were not audited |
+| SSM command completion is checked | `aws ssm wait command-executed` followed by `aws ssm get-command-invocation` | A waiter timeout can occur before a long remote operation finishes |
+| Remote deployment command succeeded | Invocation `Status: Success`, `StatusDetails: Success`, `ResponseCode: 0` | Successful shell commands do not prove HTTP or browser health |
+| Database migration command completed | stdout: `Database migrations are up to date.` | This does not prove a new schema migration was applied in that run |
+| Failure diagnostics are implemented | Invocation output includes status, response code, stdout and stderr; the step exits with saved `WAIT_STATUS` | This successful run does not demonstrate an intentionally failed deployment test |
 
-Image digests recorded by the linked run:
+The remote command ran from **19:51:50 to 19:52:26 IST** (14:21:50–14:22:26 UTC). It logged in to ECR, ran the configured Compose updates and completed the migration command.
+
+Image digests recorded by this run:
 
 ```text
 backend-v2.0
-sha256:b14b8814fb892f17b18577de65df5ace7de3feaae8f2c1409fcb6aa31fcea724
+sha256:de06be59485ca0c657c79f310be84c19acc71f8263c1da8063519193e9ab8aaa
 
 frontend-v2.0
-sha256:fd654c98a354596ebbea02462f177174cf5d4bb15eaa8d2d6fd7389a77b058ae
+sha256:7446dca349283844610c2a6540c06cb3c85ad9132a8bb674805bf48614175141
 ```
 
-These digests identify artifacts from that run. They have not been matched to running EC2 containers during this review.
+These identify the pushed artifacts. The running EC2 image digests were not independently matched during this review.
 
-## Claims reserved for later evidence
+## Current demo status — 11 November 2026
 
-Do not describe the current project as highly available, zero-downtime, fully monitored, Terraform-provisioned, automatically rolled back or tested end to end against PostgreSQL. Do not claim that every green run proves successful EC2 deployment.
+The owner reports that EC2 is stopped, so the live demo is offline. No current public availability claim is made. Source code, architecture and the successful recorded run remain inspectable.
 
-The owner has run the portfolio on EC2. The previously supplied public address was not independently reachable from the review environment; this does not establish an outage. A live demo link should be added after checking the site and its API externally.
+## Earlier evidence
 
-## Add the next proof
+[Run 40129948952](https://github.com/shreyan21/CI-CD-project/actions/runs/40129948952), for commit `03acc4c`, recorded tests, image publishing and SSM command submission on 25 October 2026 IST. Its submission response was `Pending` with `CompletedCount: 0`. The newer run above supplies the terminal result that this earlier evidence lacked.
 
-Capture one remote SSM result with `Success`, matching running image digests and healthy API responses. A short demo should show the website, a source change, the workflow, the resulting release and a database-backed response. Redact secrets and admin cookies from all recordings.
+Older LinkedIn walkthroughs document earlier containerization and delivery milestones. Roadmap labels inside those historical attachments describe their state at creation; the current project description and this evidence record describe the latest verified implementation.
+
+## Remaining verification
+
+Automatic HTTP checks and rollback are not configured. On the next running deployment, verify the homepage, database-backed API, backend `/health`, browser/admin behavior and running image digests. The manual [healthcheck script](../scripts/healthcheck.sh) can help with homepage/API checks.
+
+The project runs on a single EC2 host. High availability, zero downtime, full monitoring, Terraform provisioning, automatic rollback and end-to-end PostgreSQL test coverage are not implemented claims.

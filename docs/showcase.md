@@ -4,15 +4,41 @@
 
 ## Project title
 
-Portfolio Delivery on AWS | Docker, GitHub Actions, ECR and EC2
+Portfolio Delivery on AWS | Docker & GitHub Actions CI/CD
 
-## LinkedIn Featured / Projects description
+## LinkedIn Projects description
 
-Built a React, Express and PostgreSQL portfolio and used it to practise application delivery on AWS. Docker Compose runs Nginx, the API and a persistent database. GitHub Actions tests the backend, builds two images, publishes to ECR through OIDC and submits EC2 deployment commands through AWS Systems Manager. Includes architecture, reproducible setup and linked pipeline evidence. Release-completion checks are the next improvement.
+The description below is synchronized with the LinkedIn project entry as of 11 November 2026.
 
-Repository: https://github.com/shreyan21/CI-CD-project
+Source code: https://github.com/shreyan21/CI-CD-project
 
-Suggested skills: Docker, GitHub Actions, Amazon Web Services, Linux, CI/CD, Nginx, PostgreSQL.
+A personal React + Express + PostgreSQL portfolio with an automated AWS delivery workflow.
+
+IMPLEMENTED
+• Containerized the three-service stack with Docker Compose and persistent PostgreSQL storage.
+• Built a multi-stage frontend image: Nginx serves React and proxies /api requests to Express.
+• Automated three backend health unit tests, two application image builds and Amazon ECR publishing with GitHub Actions on master.
+• Used GitHub OIDC to assume an AWS IAM role and AWS Systems Manager to update application containers and run database migrations on EC2.
+• Added aws ssm wait command-executed to wait for remote success, then aws ssm get-command-invocation to display status, response code, stdout and stderr. The workflow preserves the waiter's exit status so a failed command or waiter timeout fails the job.
+• Diagnosed container database connectivity by replacing localhost with the Compose service name.
+
+VERIFIED — 10 NOVEMBER 2026
+Commit f7be00a: all three tests passed, both images were published to ECR, and SSM returned Success with ResponseCode 0. Migration output: "Database migrations are up to date."
+Evidence: https://github.com/shreyan21/CI-CD-project/actions/runs/42828479298
+
+STATUS
+Personal portfolio lab. EC2 is currently stopped; the live demo is offline. Automatic HTTP health checks and rollback remain future work. Older walkthroughs show earlier milestones; their roadmap labels are historical.
+
+Earlier animated walkthrough:
+https://www.linkedin.com/feed/update/urn:li:activity:7521446871475662849/
+
+## Project media
+
+- Current architecture: [delivery-overview.png](architecture/delivery-overview.png). It includes SSM waiting/result inspection and the stopped EC2 demo status.
+- Current CI/CD summary: [ci-pipeline.png](architecture/ci-pipeline.png).
+- Earlier LinkedIn walkthroughs are historical milestones. Their captions identify that scope; the current implementation is described above.
+
+Keep the GitHub source link in the project description. Use an actual architecture image for the media tile if LinkedIn cannot generate a GitHub link preview.
 
 ## LinkedIn post draft
 
@@ -22,28 +48,31 @@ I built a React + Express + PostgreSQL application, then added:
 
 - Docker Compose for the three-service stack and persistent database storage.
 - A multi-stage frontend image with Nginx serving React and forwarding /api requests to Express.
-- GitHub Actions to run backend health tests, build both application images and publish them to Amazon ECR.
-- GitHub OIDC for AWS authentication and Systems Manager commands to update the containers on EC2 and run migrations.
+- GitHub Actions to run three backend health unit tests, build both application images and publish them to Amazon ECR.
+- GitHub OIDC for AWS authentication and Systems Manager commands to update the application containers on EC2 and run migrations.
+- SSM command waiting and invocation output so the workflow checks remote completion and exposes command-failure details.
 
-My biggest takeaway: a green pipeline needs a precise definition. My current workflow confirms that AWS accepted the deployment command; waiting for the remote result and checking application health is the next improvement.
+The 10 November run passed the tests, published both images and returned SSM Success with response code 0. Its migration output confirmed that the database was up to date.
 
-Working through database connections, browser origins and Nginx routing made the architecture much clearer to me than studying each tool separately.
+My takeaway: command submission, remote command success and application health are separate checks. I now wait for the remote result; automatic HTTP checks are the next improvement.
 
-I've documented the setup, architecture and actual pipeline evidence here:
+EC2 is currently stopped, so the demo is offline. The repository and recorded run show the work:
 https://github.com/shreyan21/CI-CD-project
 
 I'm exploring junior Cloud/DevOps and application support opportunities where I can build on this hands-on work.
 
 #DevOps #AWS #Docker #GitHubActions #CloudEngineering
 
+This is a draft; it has not been posted.
+
 ## Two-minute demonstration
 
 | Time | Show |
 | --- | --- |
-| 0:00-0:25 | Portfolio UI and a real `/api/skills` response; check that fallback mode is absent |
-| 0:25-0:50 | Nginx -> Express -> PostgreSQL; explain service names and persistent volume |
-| 0:50-1:20 | Successful Actions run, tests, two image pushes and OIDC configuration |
-| 1:20-1:40 | SSM deployment commands; distinguish submission from remote completion |
-| 1:40-2:00 | One troubleshooting example you can explain, then the next health-verification improvement |
+| 0:00-0:25 | Current architecture and the stopped EC2 demo status |
+| 0:25-0:50 | Nginx -> Express -> PostgreSQL; service names and persistent volume |
+| 0:50-1:20 | Linked 10 November Actions run: three tests, two image pushes and OIDC |
+| 1:20-1:40 | SSM waiter, invocation Success/response code 0 and migration stdout |
+| 1:40-2:00 | One troubleshooting example; explain the remaining HTTP health check |
 
-Use the architecture image as the post attachment. Add the repository link to LinkedIn Featured and pin the repository on GitHub. Add a public demo URL only after verifying that the site and API work from outside AWS. The draft is prepared for review; it has not been posted.
+For a live demonstration, start EC2 separately and verify the website/API before sharing a public demo URL.
