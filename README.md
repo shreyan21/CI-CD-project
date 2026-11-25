@@ -8,7 +8,7 @@ I built a React, Express and PostgreSQL portfolio, containerized it with Docker 
 
 [Inspect a successful run](https://github.com/shreyan21/CI-CD-project/actions/runs/42828479298) | [Read the workflow](.github/workflows/ci.yml) | [Run locally](#run-locally) | [Deployment notes](docs/deployment.md) | [Evidence](docs/evidence.md)
 
-![Portfolio delivery architecture: GitHub Actions tests and builds two images, publishes to ECR, and waits for the SSM deployment result; EC2 runs Nginx, Express and PostgreSQL](docs/architecture/delivery-overview.png)
+![Portfolio delivery architecture: GitHub Actions tests and builds two images, publishes to ECR, and waits for the SSM deployment result; EC2 runs Nginx, Express and PostgreSQL](docs/architecture/delivery-overview.svg)
 
 ## What this project demonstrates
 
@@ -20,7 +20,7 @@ I built a React, Express and PostgreSQL portfolio, containerized it with Docker 
 
 **Verified on 10 November 2026:** the linked Actions run passed all three tests, published both images and returned SSM `Success` with `ResponseCode: 0`; migration output confirmed the database was up to date. The workflow does not automatically check HTTP application health afterward. See the [evidence record](docs/evidence.md).
 
-**Demo status (11 November 2026):** the owner has stopped EC2, so the live demo is offline. Source, architecture and the recorded successful run remain available.
+**Demo status.** The AWS demo is offline. The [public portfolio](https://shreyan21.github.io/portfolio-showcase/) is available on GitHub Pages. The source, architecture and recorded successful deployment remain available here.
 
 ## Application architecture
 

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
 <title>Portfolio Delivery on AWS</title>
-<desc>GitHub Actions tests and builds frontend and backend images, publishes to ECR, and submits SSM deployment commands. EC2 runs Nginx, Express and PostgreSQL. The workflow waits for SSM success and prints invocation results. HTTP health checks remain future work. EC2 is currently stopped.</desc>
+<desc>GitHub Actions tests and builds frontend and backend images, publishes to ECR, and submits SSM deployment commands. EC2 runs Nginx, Express and PostgreSQL. The workflow waits for SSM success and prints invocation results. HTTP health checks remain future work. The AWS demo is offline.</desc>
 <rect width="1600" height="1100" fill="#0b1220"/>
 <text x="64" y="63.8" fill="#58d7dd" font-family="DejaVu Sans,Arial,sans-serif" font-size="20" font-weight="700">UTKARSH SINGH RAJAWAT / PERSONAL PROJECT</text>
 <text x="60" y="158.56" fill="#e7eefb" font-family="DejaVu Sans,Arial,sans-serif" font-size="64" font-weight="700">Portfolio Delivery on AWS</text>
@@ -33,7 +33,7 @@
 <polygon points="1313,650 1327,650 1320,660" fill="#58d7dd"/>
 <text x="1340" y="586.01" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="19" font-weight="400">Run commands</text>
 <rect x="64" y="660" width="1472" height="246" rx="16" fill="#0f1b2d" stroke="#29415e" stroke-width="2"/>
-<text x="90" y="698.01" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="19" font-weight="700">EC2 / DOCKER COMPOSE — DEMO CURRENTLY STOPPED</text>
+<text x="90" y="698.01" fill="#a9bdd5" font-family="DejaVu Sans,Arial,sans-serif" font-size="19" font-weight="700">EC2 / DOCKER COMPOSE — AWS DEMO OFFLINE</text>
 <rect x="90" y="729" width="428" height="142" rx="16" fill="#192b42" stroke="#29415e" stroke-width="2"/>
 <rect x="586" y="729" width="428" height="142" rx="16" fill="#192b42" stroke="#29415e" stroke-width="2"/>
 <rect x="1082" y="729" width="428" height="142" rx="16" fill="#192b42" stroke="#29415e" stroke-width="2"/>

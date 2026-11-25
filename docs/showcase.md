@@ -27,15 +27,15 @@ Commit f7be00a: all three tests passed, both images were published to ECR, and S
 Evidence: https://github.com/shreyan21/CI-CD-project/actions/runs/42828479298
 
 STATUS
-Personal portfolio lab. EC2 is currently stopped; the live demo is offline. Automatic HTTP health checks and rollback remain future work. Older walkthroughs show earlier milestones; their roadmap labels are historical.
+Personal portfolio lab. The AWS demo is offline. The public portfolio is at https://shreyan21.github.io/portfolio-showcase/. Automatic HTTP health checks and rollback remain future work. Older walkthroughs show earlier milestones; their roadmap labels are historical.
 
 Earlier animated walkthrough:
 https://www.linkedin.com/feed/update/urn:li:activity:7521446871475662849/
 
 ## Project media
 
-- Current architecture: [delivery-overview.png](architecture/delivery-overview.png). It includes SSM waiting/result inspection and the stopped EC2 demo status.
-- Current CI/CD summary: [ci-pipeline.png](architecture/ci-pipeline.png).
+- [Delivery architecture](architecture/delivery-overview.svg) shows how the workflow waits for and inspects the SSM result.
+- [CI/CD summary](architecture/ci-pipeline.svg) shows the recorded deployment result.
 - Earlier LinkedIn walkthroughs are historical milestones. Their captions identify that scope; the current implementation is described above.
 
 Keep the GitHub source link in the project description. Use an actual architecture image for the media tile if LinkedIn cannot generate a GitHub link preview.
@@ -56,7 +56,7 @@ The 10 November run passed the tests, published both images and returned SSM Suc
 
 My takeaway: command submission, remote command success and application health are separate checks. I now wait for the remote result; automatic HTTP checks are the next improvement.
 
-EC2 is currently stopped, so the demo is offline. The repository and recorded run show the work:
+The AWS demo is offline. View my public portfolio at https://shreyan21.github.io/portfolio-showcase/. The repository and recorded run show how I deployed the application to AWS.
 https://github.com/shreyan21/CI-CD-project
 
 I'm exploring junior Cloud/DevOps and application support opportunities where I can build on this hands-on work.
@@ -69,10 +69,10 @@ This is a draft; it has not been posted.
 
 | Time | Show |
 | --- | --- |
-| 0:00-0:25 | Current architecture and the stopped EC2 demo status |
+| 0:00-0:25 | Deployment architecture and current demo status |
 | 0:25-0:50 | Nginx -> Express -> PostgreSQL; service names and persistent volume |
 | 0:50-1:20 | Linked 10 November Actions run: three tests, two image pushes and OIDC |
 | 1:20-1:40 | SSM waiter, invocation Success/response code 0 and migration stdout |
 | 1:40-2:00 | One troubleshooting example; explain the remaining HTTP health check |
 
-For a live demonstration, start EC2 separately and verify the website/API before sharing a public demo URL.
+For a live AWS demonstration, provision the replacement EC2 instance, update `AWS_INSTANCE_ID`, and verify the website and API after deploying.

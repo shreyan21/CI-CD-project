@@ -30,9 +30,9 @@ sha256:7446dca349283844610c2a6540c06cb3c85ad9132a8bb674805bf48614175141
 
 These identify the pushed artifacts. The running EC2 image digests were not independently matched during this review.
 
-## Current demo status — 11 November 2026
+## Current demo status
 
-The owner reports that EC2 is stopped, so the live demo is offline. No current public availability claim is made. Source code, architecture and the successful recorded run remain inspectable.
+The AWS demo is offline. The [public portfolio](https://shreyan21.github.io/portfolio-showcase/) is available on GitHub Pages. The successful recorded run documents the earlier AWS deployment.
 
 ## Earlier evidence
 

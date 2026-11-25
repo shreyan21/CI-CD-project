@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-labelledby="title desc">
 <title id="title">Portfolio CI pipeline</title>
-<desc id="desc">A push to master triggers GitHub Actions backend tests, then Docker builds frontend and backend images which are published to Amazon ECR. AWS authentication uses OIDC. Health tests use a mocked database. SSM deployment waits for remote success and prints invocation results. EC2 is currently stopped.</desc>
+<desc id="desc">A push to master triggers GitHub Actions backend tests, then Docker builds frontend and backend images which are published to Amazon ECR. AWS authentication uses OIDC. Health tests use a mocked database. SSM deployment waits for remote success and prints invocation results. The AWS demo is offline.</desc>
 <rect width="1200" height="1200" fill="#0B1220"/>
 <text x="70" y="64.2" fill="#63D8B1" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="700">PROJECT UPDATE  /  CI/CD ON AWS</text>
 <text x="70" y="155.2" fill="#FFFFFF" font-family="DejaVu Sans, sans-serif" font-size="64" font-weight="700">Code to EC2.</text>
@@ -48,6 +48,6 @@
 <text x="70" y="1040.8" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="21" font-weight="400">Endpoint behavior tested with a mocked database.</text>
 <polyline points="70,1080 1130,1080" fill="none" stroke="#2C4059" stroke-width="2" stroke-linejoin="round"/>
 <text x="70" y="1119.0" fill="#F4BD76" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="700">SSM: wait + inspect result | Success / code 0 on 10 Nov 2026</text>
-<text x="70" y="1164.4" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="400">EC2 stopped | Next: HTTP health checks</text>
+<text x="70" y="1164.4" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="400">AWS demo offline | Next: HTTP health checks</text>
 <text x="670" y="1164.4" fill="#AEBED1" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="400">github.com/shreyan21/CI-CD-project</text>
 </svg>

@@ -16,7 +16,7 @@ The workflow captures the SSM command ID, runs `aws ssm wait command-executed`, 
 
 [Run 42828479298](https://github.com/shreyan21/CI-CD-project/actions/runs/42828479298), for commit `f7be00a`, completed successfully on 10 November 2026. Its SSM result shows `Status: Success`, `ResponseCode: 0` and `Database migrations are up to date.` This verifies remote command completion for that run; it does not verify public HTTP availability.
 
-As of 11 November 2026, the owner has stopped EC2 and the live demo is offline. Documentation updates use a `[skip ci]` commit message to avoid initiating deployment against the stopped host. A deployment requires EC2 to be running and available to SSM.
+The AWS demo is offline. The [public portfolio](https://shreyan21.github.io/portfolio-showcase/) is available on GitHub Pages. EC2 deployment requires a running SSM-managed instance. Before deploying again, set `AWS_INSTANCE_ID` to the replacement instance ID. Documentation updates use `[skip ci]` to avoid invoking the AWS workflow.
 
 ## Configuration
 
